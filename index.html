@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norvi — Consulta vial instantánea</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --grafito: #1E1E1E;
+  --grafito-m: #2C2C2A;
+  --naranja: #E85D04;
+  --naranja-s: #FFF0E6;
+  --naranja-t: #C04B00;
+  --blanco: #FFFFFF;
+  --blanco-c: #F5F5F3;
+  --gris-s: #F2F2F0;
+  --gris-t: #888780;
+  --borde: #E0E0DC;
+  --verde-s: #E6F4EC;
+  --verde-t: #1B6B3A;
+  --verde-d: #0F3D20;
+  --rojo-s: #FCEBEB;
+  --rojo-t: #A32D2D;
+  --rojo-d: #501313;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--blanco-c);
+  color: var(--grafito-m);
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  background: var(--grafito);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-logo { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; text-decoration: none; }
+.nav-logo .nor { color: var(--blanco-c); }
+.nav-logo .vi  { color: var(--naranja); }
+.nav-claim { font-size: 12px; color: var(--gris-t); }
+
+/* HERO */
+.hero {
+  background: var(--grafito);
+  padding: 40px 24px 36px;
+  border-bottom: 3px solid var(--naranja);
+}
+.hero-titulo { font-size: 13px; font-weight: 500; color: var(--naranja); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+.hero-claim { font-size: 26px; font-weight: 600; color: var(--blanco-c); line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-claim span { color: var(--naranja); }
+.hero-sub { font-size: 13px; color: var(--gris-t); line-height: 1.6; margin-bottom: 24px; }
+
+/* BARRA DE BÚSQUEDA */
+.search-wrap { position: relative; }
+.search-input {
+  width: 100%;
+  background: #2C2C2A;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 14px 52px 14px 16px;
+  font-size: 14px;
+  color: var(--blanco-c);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color .2s;
+}
+.search-input::placeholder { color: var(--gris-t); }
+.search-input:focus { border-color: var(--naranja); }
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: var(--naranja);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+}
+
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 16px 24px;
+  background: var(--blanco);
+  border-bottom: 0.5px solid var(--borde);
+}
+.stat { text-align: center; }
+.stat-num { font-size: 22px; font-weight: 600; color: var(--naranja); display: block; line-height: 1; }
+.stat-label { font-size: 10px; color: var(--gris-t); margin-top: 3px; display: block; line-height: 1.3; }
+
+/* SECCIONES */
+.seccion { padding: 20px 24px 8px; }
+.sec-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--naranja);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* MÓDULOS */
+.modulos-grupo { margin-bottom: 20px; }
+.grupo-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gris-t);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+.modulos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.modulo-card {
+  background: var(--blanco);
+  border: 0.5px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px;
+  text-decoration: none;
+  display: block;
+  transition: border-color .15s, transform .1s;
+  cursor: pointer;
+}
+.modulo-card:hover { border-color: var(--naranja); transform: translateY(-1px); }
+.modulo-card.destacado { background: var(--grafito); border-color: var(--grafito); }
+.modulo-icon { font-size: 20px; color: var(--naranja); margin-bottom: 6px; display: block; }
+.modulo-nombre { font-size: 12px; font-weight: 500; color: var(--grafito-m); line-height: 1.3; margin: 0 0 3px; }
+.modulo-card.destacado .modulo-nombre { color: var(--blanco-c); }
+.modulo-count { font-size: 10px; color: var(--gris-t); }
+
+/* PREGUNTAS FRECUENTES */
+.pf-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.pf-item {
+  background: var(--blanco);
+  border: 0.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .15s;
+}
+.pf-item:hover { border-color: var(--naranja); }
+.pf-icon { font-size: 15px; color: var(--naranja); flex-shrink: 0; }
+.pf-texto { font-size: 13px; color: var(--grafito-m); flex: 1; line-height: 1.35; }
+.pf-arrow { font-size: 14px; color: var(--gris-t); }
+
+/* BANNER CONTANOS */
+.contanos {
+  background: var(--naranja-s);
+  border: 0.5px solid #FFDEC8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 0 24px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.contanos-icon { font-size: 22px; color: var(--naranja); flex-shrink: 0; }
+.contanos-texto { font-size: 13px; color: var(--naranja-t); line-height: 1.5; }
+.contanos-link { font-size: 13px; font-weight: 500; color: var(--naranja); display: block; margin-top: 4px; text-decoration: none; }
+
+/* FOOTER */
+footer {
+  background: var(--grafito);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-logo { font-size: 16px; font-weight: 600; }
+.footer-logo .nor { color: var(--blanco-c); }
+.footer-logo .vi  { color: var(--naranja); }
+.footer-txt { font-size: 10px; color: var(--gris-t); }
+
+/* NAV INFERIOR */
+.bottom-nav {
+  background: var(--grafito);
+  border-top: 0.5px solid #333;
+  padding: 10px 0 14px;
+  display: flex;
+  justify-content: space-around;
+  position: sticky;
+  bottom: 0;
+}
+.bnav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background: none;
+  padding: 0 16px;
+}
+.bnav-icon { font-size: 20px; color: #666; }
+.bnav-icon.activo { color: var(--naranja); }
+.bnav-label { font-size: 9px; color: #666; }
+.bnav-label.activo { color: var(--naranja); }
+
+/* PÁGINA DE MÓDULO */
+.pagina { display: none; }
+.pagina.activa { display: block; }
+
+/* CARDS DE SITUACIÓN */
+.situacion {
+  background: var(--blanco);
+  border: 0.5px solid var(--borde);
+  border-radius: 12px;
+  margin: 0 0 10px;
+  overflow: hidden;
+}
+.sit-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.sit-icono {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 17px;
+}
+.sit-titulo { font-size: 14px; font-weight: 500; color: var(--grafito); margin: 0 0 2px; }
+.sit-subtitulo { font-size: 12px; color: var(--gris-t); margin: 0; }
+.sit-chevron { margin-left: auto; font-size: 16px; color: var(--gris-t); transition: transform .2s; flex-shrink: 0; }
+.sit-chevron.open { transform: rotate(180deg); }
+.sit-cuerpo { display: none; padding: 0 16px 14px; border-top: 0.5px solid var(--borde); }
+.sit-cuerpo.open { display: block; }
+.sit-veredicto {
+  margin: 12px 0 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.v-verde { background: var(--verde-s); color: var(--verde-d); }
+.v-rojo  { background: var(--rojo-s);  color: var(--rojo-d);  }
+.v-naranja { background: var(--naranja-s); color: var(--naranja-t); }
+.v-azul { background: #E6F1FB; color: #0C447C; }
+.sit-detalle { font-size: 13px; color: var(--grafito-m); line-height: 1.65; margin: 6px 0 0; }
+.sit-ley { font-size: 11px; color: var(--gris-t); margin-top: 8px; }
+.sit-prov {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #FAEEDA;
+  color: #854F0B;
+  margin-top: 6px;
+}
+
+/* HEADER DE MÓDULO */
+.mod-header {
+  background: var(--grafito);
+  padding: 16px 24px 14px;
+  border-bottom: 3px solid var(--naranja);
+}
+.mod-back {
+  font-size: 13px;
+  color: var(--gris-t);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  padding: 0;
+}
+.mod-back:hover { color: var(--naranja); }
+.mod-titulo { font-size: 18px; font-weight: 600; color: var(--blanco-c); margin: 0 0 4px; }
+.mod-count-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--naranja);
+  background: rgba(232,93,4,.15);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+/* BÚSQUEDA */
+.buscar-wrap { padding: 20px 24px; }
+.buscar-campo {
+  width: 100%;
+  background: var(--blanco);
+  border: 1.5px solid var(--naranja);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--grafito);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  margin-bottom: 14px;
+}
+.buscar-campo::placeholder { color: var(--gris-t); }
+.buscar-sugerencias { display: flex; flex-direction: column; gap: 6px; }
+.buscar-sug {
+  background: var(--blanco);
+  border: 0.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--grafito-m);
+  transition: border-color .15s;
+}
+.buscar-sug:hover { border-color: var(--naranja); }
+.buscar-sug-icon { font-size: 15px; color: var(--naranja); flex-shrink: 0; }
+
+/* PROVINCIAS */
+.provincias-lista { padding: 0 24px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.prov-item {
+  background: var(--blanco);
+  border: 0.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.prov-item:hover { border-color: var(--naranja); }
+.prov-nombre { font-size: 13px; font-weight: 500; color: var(--grafito); }
+.prov-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.prov-cero { background: var(--rojo-s); color: var(--rojo-t); }
+.prov-medio { background: #FAEEDA; color: #854F0B; }
+
+@media (min-width: 600px) {
+  nav, .hero, .stats, .seccion, footer { padding-left: 32px; padding-right: 32px; }
+  .contanos { margin-left: 32px; margin-right: 32px; }
+  .modulos-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" onclick="mostrarPagina('inicio')">
+    <span class="nor">Nor</span><span class="vi">vi</span>
+  </a>
+  <span class="nav-claim">Consulta vial · Argentina</span>
+</nav>
+
+<!-- PÁGINA INICIO -->
+<div id="pagina-inicio" class="pagina activa">
+
+  <div class="hero">
+    <p class="hero-titulo">Norvi</p>
+    <h1 class="hero-claim">La duda vial que tengas<br>tiene una <span>respuesta legal.</span></h1>
+    <p class="hero-sub">Consultá en segundos. Cada respuesta incluye el artículo de ley que la respalda.</p>
+    <div class="search-wrap">
+      <input class="search-input" type="text" placeholder="¿Cuál es tu duda de tránsito?" id="search-hero" onkeydown="if(event.key==='Enter')buscarDesdeHero()">
+      <button class="search-btn" onclick="buscarDesdeHero()">→</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num">110+</span>
+      <span class="stat-label">situaciones resueltas</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">24</span>
+      <span class="stat-label">provincias cubiertas</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Ley</span>
+      <span class="stat-label">cada respuesta tiene su artículo</span>
+    </div>
+  </div>
+
+  <div class="seccion">
+    <p class="sec-label">Más consultados</p>
+
+    <div class="modulos-grupo">
+      <p class="grupo-label">Consulta diaria</p>
+      <div class="modulos-grid">
+        <a class="modulo-card destacado" onclick="mostrarModulo('prioridades')">
+          <span class="modulo-icon">↔</span>
+          <p class="modulo-nombre">Prioridades y cruces</p>
+          <p class="modulo-count">8 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('estacionamiento')">
+          <span class="modulo-icon" style="color:var(--naranja)">P</span>
+          <p class="modulo-nombre">Estacionamiento</p>
+          <p class="modulo-count">6 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('accidentes')">
+          <span class="modulo-icon" style="color:var(--naranja)">⚠</span>
+          <p class="modulo-nombre">Accidentes y responsabilidad</p>
+          <p class="modulo-count">6 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('provincias-tab')">
+          <span class="modulo-icon" style="color:var(--naranja)">📍</span>
+          <p class="modulo-nombre">Normas por provincia</p>
+          <p class="modulo-count">24 jurisdicciones</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="modulos-grupo">
+      <p class="grupo-label">Antes de salir</p>
+      <div class="modulos-grid">
+        <a class="modulo-card" onclick="mostrarModulo('ruta')">
+          <span class="modulo-icon" style="color:var(--naranja)">🛣</span>
+          <p class="modulo-nombre">Ruta y autopista</p>
+          <p class="modulo-count">7 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('documentacion')">
+          <span class="modulo-icon" style="color:var(--naranja)">🪪</span>
+          <p class="modulo-nombre">Documentación y equipamiento</p>
+          <p class="modulo-count">5 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('conductor')">
+          <span class="modulo-icon" style="color:var(--naranja)">👤</span>
+          <p class="modulo-nombre">El conductor</p>
+          <p class="modulo-count">5 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('emergencias')">
+          <span class="modulo-icon" style="color:var(--naranja)">🚨</span>
+          <p class="modulo-nombre">Emergencias en ruta</p>
+          <p class="modulo-count">4 situaciones</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="modulos-grupo">
+      <p class="grupo-label">Situación específica</p>
+      <div class="modulos-grid">
+        <a class="modulo-card" onclick="mostrarModulo('delivery')">
+          <span class="modulo-icon" style="color:var(--naranja)">🏍</span>
+          <p class="modulo-nombre">Motos de delivery</p>
+          <p class="modulo-count">5 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('discapacidad')">
+          <span class="modulo-icon" style="color:var(--naranja)">♿</span>
+          <p class="modulo-nombre">Discapacidad</p>
+          <p class="modulo-count">6 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('transporte')">
+          <span class="modulo-icon" style="color:var(--naranja)">🚕</span>
+          <p class="modulo-nombre">Transporte de pasajeros</p>
+          <p class="modulo-count">4 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('exterior')">
+          <span class="modulo-icon" style="color:var(--naranja)">🏳</span>
+          <p class="modulo-nombre">Viajes al exterior</p>
+          <p class="modulo-count">3 países</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="modulos-grupo">
+      <p class="grupo-label">Nuevas movilidades</p>
+      <div class="modulos-grid">
+        <a class="modulo-card" onclick="mostrarModulo('micromovilidad')">
+          <span class="modulo-icon" style="color:var(--naranja)">🛴</span>
+          <p class="modulo-nombre">Micromovilidad</p>
+          <p class="modulo-count">4 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('electricos')">
+          <span class="modulo-icon" style="color:var(--naranja)">⚡</span>
+          <p class="modulo-nombre">Vehículos eléctricos</p>
+          <p class="modulo-count">3 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('autonomos')">
+          <span class="modulo-icon" style="color:var(--naranja)">🤖</span>
+          <p class="modulo-nombre">Vehículos autónomos</p>
+          <p class="modulo-count">3 situaciones</p>
+        </a>
+      </div>
+    </div>
+
+    <p class="sec-label" style="margin-top:4px">Preguntas frecuentes</p>
+    <div class="pf-lista">
+      <a class="pf-item" onclick="mostrarModulo('prioridades')">
+        <span class="pf-icon">?</span>
+        <span class="pf-texto">¿Quién tiene prioridad en una rotonda?</span>
+        <span class="pf-arrow">›</span>
+      </a>
+      <a class="pf-item" onclick="mostrarModulo('accidentes')">
+        <span class="pf-icon">?</span>
+        <span class="pf-texto">Me chocaron en doble fila. ¿Tengo culpa?</span>
+        <span class="pf-arrow">›</span>
+      </a>
+      <a class="pf-item" onclick="mostrarModulo('emergencias')">
+        <span class="pf-icon">?</span>
+        <span class="pf-texto">¿Cuándo y dónde poner las balizas en ruta?</span>
+        <span class="pf-arrow">›</span>
+      </a>
+      <a class="pf-item" onclick="mostrarPagina('provincias')">
+        <span class="pf-icon">?</span>
+        <span class="pf-texto">¿Vale la licencia digital en Córdoba?</span>
+        <span class="pf-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="contanos">
+    <span style="font-size:22px;color:var(--naranja);flex-shrink:0">?</span>
+    <div class="contanos-texto">
+      ¿Tu situación no está en Norvi?
+      <a class="contanos-link" onclick="mostrarPagina('consulta')">Contanos y la revisamos →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo"><span class="nor">Nor</span><span class="vi">vi</span></div>
+    <span class="footer-txt">norvi.ar · 2025</span>
+  </footer>
+</div>
+
+<!-- PÁGINA MÓDULO -->
+<div id="pagina-modulo" class="pagina">
+  <div class="mod-header">
+    <button class="mod-back" onclick="mostrarPagina('inicio')">← Volver al inicio</button>
+    <h2 class="mod-titulo" id="mod-titulo-texto">Módulo</h2>
+    <span class="mod-count-badge" id="mod-count-texto"></span>
+  </div>
+  <div style="padding: 20px 24px;" id="mod-contenido"></div>
+  <div class="contanos" style="margin: 0 24px 24px">
+    <span style="font-size:22px;color:var(--naranja);flex-shrink:0">?</span>
+    <div class="contanos-texto">
+      ¿No encontraste tu situación?
+      <a class="contanos-link" onclick="mostrarPagina('consulta')">Contanos y la revisamos →</a>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA BUSCAR -->
+<div id="pagina-buscar" class="pagina">
+  <div class="mod-header">
+    <h2 class="mod-titulo">Buscar</h2>
+  </div>
+  <div class="buscar-wrap">
+    <input class="buscar-campo" type="text" placeholder="Escribí tu duda en tus palabras..." id="buscar-input" oninput="filtrarBusqueda(this.value)">
+    <div class="buscar-sugerencias" id="buscar-resultados">
+      <p style="font-size:13px;color:var(--gris-t);margin-bottom:8px">Consultas frecuentes</p>
+      <div class="buscar-sug" onclick="mostrarModulo('prioridades')">
+        <span class="buscar-sug-icon">↔</span>¿Quién tiene prioridad en una rotonda?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('accidentes')">
+        <span class="buscar-sug-icon">⚠</span>Me chocaron en doble fila. ¿Tengo culpa?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('ruta')">
+        <span class="buscar-sug-icon">🛣</span>¿Puedo ir en el carril izquierdo de la autopista?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('conductor')">
+        <span class="buscar-sug-icon">📱</span>¿Puedo usar el celular con manos libres?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('estacionamiento')">
+        <span class="buscar-sug-icon">P</span>¿Dónde está prohibido estacionar?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('emergencias')">
+        <span class="buscar-sug-icon">🚨</span>Se me frenó el auto en ruta. ¿Qué hago?
+      </div>
+      <div class="buscar-sug" onclick="mostrarPagina('provincias')">
+        <span class="buscar-sug-icon">📍</span>¿Vale la licencia digital en Córdoba?
+      </div>
+      <div class="buscar-sug" onclick="mostrarModulo('accidentes')">
+        <span class="buscar-sug-icon">🚗</span>Me chocaron por atrás. ¿Siempre tienen la culpa?
+      </div>
+    </div>
+  </div>
+  <div class="contanos" style="margin: 0 24px 24px">
+    <span style="font-size:22px;color:var(--naranja);flex-shrink:0">?</span>
+    <div class="contanos-texto">
+      ¿No encontrás lo que buscás?
+      <a class="contanos-link" onclick="mostrarPagina('consulta')">Contanos →</a>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA PROVINCIAS -->
+<div id="pagina-provincias" class="pagina">
+  <div class="mod-header">
+    <h2 class="mod-titulo">Normas por provincia</h2>
+    <span class="mod-count-badge">24 jurisdicciones</span>
+  </div>
+  <div style="padding:16px 24px 8px">
+    <p style="font-size:12px;color:var(--gris-t);line-height:1.6;margin-bottom:16px">
+      Argentina no tiene una sola ley de tránsito. Lo que está permitido en Buenos Aires puede ser infracción en Córdoba. Conocé las diferencias antes de salir de tu provincia.
+    </p>
+    <p class="sec-label">Alcoholemia por provincia</p>
+  </div>
+  <div class="provincias-lista">
+    <div class="prov-item"><span class="prov-nombre">Buenos Aires (Prov.)</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">CABA</span><span class="prov-badge prov-medio">0,5 g/l</span></div>
+    <div class="prov-item"><span class="prov-nombre">Córdoba</span><span class="prov-badge prov-cero">Cero en rutas</span></div>
+    <div class="prov-item"><span class="prov-nombre">Santa Fe</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Mendoza</span><span class="prov-badge prov-medio">0,5 g/l</span></div>
+    <div class="prov-item"><span class="prov-nombre">San Juan</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Entre Ríos</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Misiones</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Corrientes</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Neuquén</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Río Negro</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Chubut</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Salta</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Jujuy</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Tucumán</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">San Luis</span><span class="prov-badge prov-medio">0,2 g/l</span></div>
+    <div class="prov-item"><span class="prov-nombre">La Rioja</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Catamarca</span><span class="prov-badge prov-medio">0,4 g/l</span></div>
+    <div class="prov-item"><span class="prov-nombre">La Pampa</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Chaco</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Formosa</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Santiago del Estero</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Santa Cruz</span><span class="prov-badge prov-cero">Cero</span></div>
+    <div class="prov-item"><span class="prov-nombre">Tierra del Fuego</span><span class="prov-badge prov-medio">0,2 g/l</span></div>
+  </div>
+  <div style="padding: 0 24px 8px">
+    <p class="sec-label">Licencia digital — estado de adhesión</p>
+    <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+      <p style="font-size:13px;font-weight:500;color:var(--rojo-t);margin-bottom:8px">❌ No aceptan licencia digital</p>
+      <p style="font-size:13px;color:var(--grafito-m);margin-bottom:12px">Córdoba · Tucumán · Santiago del Estero · Formosa</p>
+      <p style="font-size:12px;color:var(--gris-t);line-height:1.5">En estas provincias la Policía Caminera exige licencia física. Siempre llevá el plástico cuando viajás al interior.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA CONSULTA -->
+<div id="pagina-consulta" class="pagina">
+  <div class="mod-header">
+    <button class="mod-back" onclick="history.back(); mostrarPagina('inicio')">← Volver</button>
+    <h2 class="mod-titulo">¿No encontraste tu situación?</h2>
+  </div>
+  <div style="padding:20px 24px">
+    <div style="background:var(--grafito);border-radius:14px;padding:16px;margin-bottom:20px">
+      <p style="font-size:14px;font-weight:500;color:var(--blanco-c);margin-bottom:8px">Cómo funciona</p>
+      <p style="font-size:12px;color:var(--gris-t);line-height:1.6">Podés contarnos el caso. Lo revisamos, verificamos contra la ley y <span style="color:var(--naranja)">si corresponde, lo sumamos a Norvi</span>. No es una consulta en tiempo real — es un aporte que mejora el producto para todos.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:20px;background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:0.5px solid var(--borde)">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--naranja);color:white;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+        <div><p style="font-size:13px;font-weight:500;color:var(--grafito);margin-bottom:2px">Nos contás la situación</p><p style="font-size:12px;color:var(--gris-t)">En tus palabras, como pasó.</p></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:0.5px solid var(--borde)">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--naranja);color:white;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+        <div><p style="font-size:13px;font-weight:500;color:var(--grafito);margin-bottom:2px">Nosotros la revisamos</p><p style="font-size:12px;color:var(--gris-t)">Verificamos contra la ley. No hay respuesta automática.</p></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px">
+        <div style="width:22px;height:22px;border-radius:50%;background:#D3D1C7;color:var(--gris-t);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+        <div><p style="font-size:13px;font-weight:500;color:var(--grafito);margin-bottom:2px">Si corresponde, la sumamos</p><p style="font-size:12px;color:var(--gris-t)">Aparece en Norvi con el artículo de ley que la respalda.</p></div>
+      </div>
+    </div>
+    <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:14px;margin-bottom:12px">
+      <p style="font-size:11px;font-weight:500;color:var(--gris-t);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Describí tu situación</p>
+      <textarea style="width:100%;border:0.5px solid var(--borde);border-radius:8px;padding:10px;font-size:13px;color:var(--grafito);font-family:'DM Sans',sans-serif;resize:none;height:90px;background:var(--blanco-c);outline:none" placeholder="Ej: Estaba saliendo de un garage y pasó una moto por la vereda. ¿Quién tenía razón?"></textarea>
+      <div style="height:10px"></div>
+      <p style="font-size:11px;font-weight:500;color:var(--gris-t);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Tu provincia (opcional)</p>
+      <input type="text" style="width:100%;border:0.5px solid var(--borde);border-radius:8px;padding:9px 10px;font-size:13px;color:var(--grafito);font-family:'DM Sans',sans-serif;background:var(--blanco-c);outline:none" placeholder="Ej: Buenos Aires, Córdoba...">
+    </div>
+    <p style="font-size:11px;color:var(--gris-t);line-height:1.5;margin-bottom:14px">Tu consulta no recibirá respuesta directa. Norvi no brinda asesoramiento legal personalizado.</p>
+    <button onclick="enviarConsulta()" style="width:100%;background:var(--naranja);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">Enviar situación</button>
+  </div>
+</div>
+
+<!-- NAV INFERIOR -->
+<div class="bottom-nav" id="bottom-nav">
+  <button class="bnav-tab" onclick="mostrarPagina('inicio')" id="tab-inicio">
+    <span class="bnav-icon activo" id="icon-inicio">⌂</span>
+    <span class="bnav-label activo" id="label-inicio">Inicio</span>
+  </button>
+  <button class="bnav-tab" onclick="mostrarPagina('buscar')" id="tab-buscar">
+    <span class="bnav-icon" id="icon-buscar">⌕</span>
+    <span class="bnav-label" id="label-buscar">Buscar</span>
+  </button>
+  <button class="bnav-tab" onclick="mostrarPagina('provincias')" id="tab-provincias">
+    <span class="bnav-icon" id="icon-provincias">📍</span>
+    <span class="bnav-label" id="label-provincias">Provincias</span>
+  </button>
+</div>
+
+<script>
+const MODULOS = {
+  prioridades: {
+    titulo: 'Prioridades y cruces',
+    count: '8 situaciones',
+    situaciones: [
+      {
+        titulo: 'Cruce sin semáforo: ¿quién pasa primero?',
+        sub: 'La duda clásica en cada esquina del país',
+        icono: '↔', bg: '#E6F1FB', color: '#185FA5',
+        veredicto: 'v-verde', vtext: '✓ Pasa primero el que viene por tu derecha',
+        detalle: 'Si llegás a una esquina al mismo tiempo que otro auto, cedele el paso al que viene de tu lado derecho. No importa si venís por una calle más ancha, si llegaste antes, ni si sos más rápido.<br><br><strong>Excepciones reales:</strong> perdés esa prioridad si venís de una calle de tierra y el otro viene por asfalto, o si el otro viene por una semiautopista.',
+        ley: 'Art. 41 — Ley Nacional 24.449'
+      },
+      {
+        titulo: 'Rotonda: ¿quién cede el paso?',
+        sub: 'El que está adentro manda',
+        icono: '↻', bg: '#EAF3DE', color: '#3B6D11',
+        veredicto: 'v-verde', vtext: '✓ El que ya está circulando adentro tiene prioridad absoluta',
+        detalle: 'En una rotonda, la regla de la derecha no aplica. El que está girando adentro tiene prioridad sobre el que quiere entrar. Si vas a entrar: frenás, mirás, y esperás que no venga nadie circulando.',
+        ley: 'Art. 43 — Ley Nacional 24.449'
+      },
+      {
+        titulo: 'Semáforo en amarillo: ¿freno o paso?',
+        sub: 'La respuesta correcta no es la que usa el 80% de los conductores',
+        icono: '🚦', bg: '#FAEEDA', color: '#854F0B',
+        veredicto: 'v-naranja', vtext: '! Deberías frenar — a menos que ya sea imposible hacerlo con seguridad',
+        detalle: 'Ante luz amarilla, detenerse si se estima que no se alcanzará a transponer la encrucijada antes de la roja. El amarillo es aviso de que viene el rojo, no permiso para apurarse.<br><br><strong>Amarillo intermitente</strong> es distinto: avanzás con precaución máxima, no es obligatorio frenar.',
+        ley: 'Art. 44 inc. a.3 y a.4 — Ley 24.449'
+      },
+      {
+        titulo: 'Peatón en la senda: ¿siempre tiene prioridad?',
+        sub: 'Sí, pero hay condiciones',
+        icono: '🚶', bg: '#FBEAF0', color: '#993556',
+        veredicto: 'v-verde', vtext: '✓ El peatón que cruza por la senda tiene prioridad absoluta',
+        detalle: 'Si un peatón está cruzando por la senda peatonal —marcada o no— tenés que parar. No alcanzarle justo. Parar.<br><br><strong>La trampa:</strong> la prioridad es del peatón que ya está cruzando. Si está parado en la vereda esperando, no tenés obligación legal de parar.',
+        ley: 'Art. 41 inc. e — Ley Nacional 24.449'
+      }
+    ]
+  },
+  accidentes: {
+    titulo: 'Accidentes y responsabilidad',
+    count: '6 situaciones',
+    situaciones: [
+      {
+        titulo: 'Estaba en doble fila y me chocaron: ¿la culpa es del otro?',
+        sub: 'El caso más frecuente y el más mal entendido',
+        icono: '⚠', bg: '#FAEEDA', color: '#854F0B',
+        veredicto: 'v-rojo', vtext: '✗ No. En doble fila la culpa es principalmente tuya',
+        detalle: 'La doble fila está expresamente prohibida. Al detenerte sobre la calzada creaste un obstáculo en la vía. Eso te convierte en responsable del riesgo generado.<br><br><strong>¿Puede haber culpa compartida?</strong> Sí, si el otro conducía a exceso de velocidad o no hizo ninguna maniobra para evitarlo. Pero el punto de partida legal te pone a vos en desventaja.<br><br><strong>En CABA:</strong> pasados 2 minutos detenido sin el conductor a bordo, ya se considera estacionamiento ilegal.',
+        ley: 'Arts. 48, 64 y 72 — Ley 24.449 / Código de Tránsito CABA'
+      },
+      {
+        titulo: 'Me chocaron por atrás: ¿siempre tienen la culpa?',
+        sub: 'Casi siempre sí — pero hay excepciones que importan',
+        icono: '🚗', bg: '#FCEBEB', color: '#A32D2D',
+        veredicto: 'v-naranja', vtext: '! En general sí — pero no es automático, depende de tu conducta también',
+        detalle: 'La ley obliga a mantener distancia suficiente para frenar ante cualquier imprevisto. Si el de atrás no la mantuvo, la responsabilidad es suya.<br><br><strong>Cuándo puede haber culpa compartida:</strong> si frenaste de golpe sin motivo, cortaste el carril sin señalizar, o tenías las luces de freno fundidas.',
+        ley: 'Arts. 52 y 64 — Ley 24.449 / Art. 1726 — Código Civil y Comercial'
+      },
+      {
+        titulo: 'Estaba mal estacionado y me chocaron: ¿tengo culpa?',
+        sub: 'La respuesta que nadie quiere escuchar',
+        icono: '🅿', bg: '#FCEBEB', color: '#A32D2D',
+        veredicto: 'v-naranja', vtext: '! Sí, muy probablemente compartís la culpa — aunque no estuvieras en el auto',
+        detalle: 'Estacionar en lugar prohibido es una infracción que genera responsabilidad civil. Si tu vehículo mal estacionado bloqueaba visibilidad u obligó al otro a maniobrar, la justicia te va a atribuir parte de la culpa.<br><br>Los fallos suelen distribuir la responsabilidad en porcentajes — por ejemplo, 50% cada uno.',
+        ley: 'Arts. 48 y 72 — Ley 24.449 / Art. 1726 — Código Civil y Comercial'
+      },
+      {
+        titulo: 'Tuve un choque: ¿qué tengo que hacer en el momento?',
+        sub: 'Los pasos exactos — antes de que el estrés nuble todo',
+        icono: '📋', bg: '#EAF3DE', color: '#3B6D11',
+        veredicto: 'v-azul', vtext: 'ℹ Hay obligaciones legales concretas — no cumplirlas puede perjudicarte',
+        detalle: '<strong>1.</strong> Detenete. Irse del lugar es fuga — delito penal si hay heridos.<br><strong>2.</strong> Verificá si hay heridos. Si los hay, llamá al 107 o 911 antes de cualquier otra cosa.<br><strong>3.</strong> Señalizá el lugar con balizas.<br><strong>4.</strong> Intercambiá datos: nombre, DNI, licencia, seguro del otro conductor.<br><strong>5.</strong> Fotografiá todo antes de mover los vehículos.<br><strong>6.</strong> No firmes nada ni aceptes arreglos en el momento.<br><strong>7.</strong> Denunciá al seguro dentro de las 72 horas.',
+        ley: 'Art. 65 — Ley 24.449 / Art. 106 — Código Penal'
+      }
+    ]
+  },
+  ruta: {
+    titulo: 'Ruta y autopista',
+    count: '7 situaciones',
+    situaciones: [
+      {
+        titulo: '¿A cuánto puedo ir? Las velocidades reales',
+        sub: 'Lo que dice la ley, no lo que creés que dice',
+        icono: '🏎', bg: '#E6F1FB', color: '#185FA5',
+        veredicto: 'v-azul', vtext: 'ℹ Depende del tipo de vía y del vehículo',
+        detalle: '<strong>Calle urbana:</strong> 40 km/h<br><strong>Avenida urbana:</strong> 60 km/h<br><strong>Ruta nacional:</strong> 110 km/h<br><strong>Semiautopista:</strong> 120 km/h<br><strong>Autopista:</strong> 130 km/h<br><strong>Frente a escuela (en horario):</strong> 20 km/h<br><strong>Paso a nivel sin barrera:</strong> 20 km/h<br><br>La velocidad mínima es la mitad del máximo de esa vía.',
+        ley: 'Art. 51 — Ley Nacional 24.449',
+        prov: 'CABA: autopistas limitadas a 100 km/h por ordenanza local'
+      },
+      {
+        titulo: 'Carril izquierdo en autopista: ¿puedo ir ahí tranquilo?',
+        sub: 'El error más común en autopistas argentinas',
+        icono: '⟵', bg: '#EEEDFE', color: '#534AB7',
+        veredicto: 'v-rojo', vtext: '✗ No. El carril izquierdo es solo para adelantar o para la velocidad máxima',
+        detalle: 'En autopistas, el carril izquierdo está reservado para circular a la velocidad máxima y para adelantar. Una vez que adelantaste, volvés al carril de la derecha.<br><br>Quedarse plantado en el carril izquierdo bloqueando el tráfico es infracción, aunque vayas a 130.',
+        ley: 'Art. 46 inc. a — Ley Nacional 24.449'
+      },
+      {
+        titulo: 'Luces en ruta de día: ¿es obligatorio?',
+        sub: 'Sí — y muchos lo desconocen hasta que llega la multa',
+        icono: '💡', bg: '#FAEEDA', color: '#854F0B',
+        veredicto: 'v-rojo', vtext: '✗ Sí, las luces bajas son obligatorias en ruta — de día y de noche',
+        detalle: 'En rutas nacionales, las luces bajas deben estar encendidas siempre, independientemente del sol. No es opcional.<br><br><strong>Luz alta:</strong> solo en zona rural o autopistas cuando la luz natural no alcanza. Si viene un vehículo de frente, obligatorio bajar a baja.',
+        ley: 'Art. 47 — Ley 24.449 modificada por Ley 27.425'
+      }
+    ]
+  },
+  emergencias: {
+    titulo: 'Emergencias en ruta',
+    count: '4 situaciones',
+    situaciones: [
+      {
+        titulo: 'Se me frenó el auto en ruta: pasos exactos',
+        sub: 'Lo que hacés en los primeros 60 segundos define todo',
+        icono: '🚨', bg: '#FAEEDA', color: '#854F0B',
+        veredicto: 'v-azul', vtext: 'ℹ Hay un protocolo preciso — cada paso tiene una razón de seguridad',
+        detalle: '<strong>1.</strong> Encendé las balizas de emergencia inmediatamente.<br><strong>2.</strong> Dirigí el auto a la banquina derecha sin frenar bruscamente.<br><strong>3.</strong> Freno de mano activado una vez detenido.<br><strong>4.</strong> No bajés todavía. Evaluá el tráfico.<br><strong>5.</strong> Si bajás: siempre por el lado contrario al tráfico.<br><strong>6.</strong> Colocá balizas triangulares a 100 metros atrás y adelante.<br><strong>7.</strong> Llamá al 140 o a tu seguro.',
+        ley: 'Arts. 40, 48 y 72 — Ley 24.449'
+      },
+      {
+        titulo: 'Se me frenó el auto en autopista: es diferente',
+        sub: 'En autopista las reglas cambian — el riesgo es mucho mayor',
+        icono: '🛣', bg: '#FCEBEB', color: '#A32D2D',
+        veredicto: 'v-rojo', vtext: '✗ En autopista NO bajés del auto si no es absolutamente necesario',
+        detalle: 'Los autos circulan a 100–130 km/h. Salir del auto en la calzada es extremadamente peligroso. Quedarse dentro del vehículo es la opción más segura mientras esperás asistencia.<br><br><strong>Si hay riesgo de incendio:</strong> ahí sí bajás, por el lado derecho, alejate de la calzada y ubicate detrás de la barrera de contención.',
+        ley: 'Art. 46 — Ley 24.449'
+      },
+      {
+        titulo: 'Números de emergencia vial: guardalos ahora',
+        sub: 'No los busques cuando los necesitás',
+        icono: '📞', bg: '#EAF3DE', color: '#3B6D11',
+        veredicto: 'v-verde', vtext: '✓ Tres números que funcionan en la mayoría del país',
+        detalle: '<strong>140</strong> — Emergencias viales en rutas nacionales<br><strong>911</strong> — Emergencias generales (accidentes con heridos)<br><strong>107</strong> — SAME / Ambulancias<br><br><strong>En autopistas concesionadas:</strong> cada concesionaria tiene su número de asistencia — indicado en carteles cada pocos kilómetros.',
+        ley: 'ANSV / Vialidad Nacional Argentina'
+      }
+    ]
+  }
+};
+
+let paginaActual = 'inicio';
+let moduloActual = null;
+
+function mostrarPagina(pagina) {
+  document.querySelectorAll('.pagina').forEach(p => p.classList.remove('activa'));
+  document.getElementById('pagina-' + pagina).classList.add('activa');
+  paginaActual = pagina;
+  actualizarTabs(pagina);
+  window.scrollTo(0, 0);
+}
+
+function mostrarModulo(id) {
+  const mod = MODULOS[id];
+  if (!mod) return;
+  moduloActual = id;
+  document.getElementById('mod-titulo-texto').textContent = mod.titulo;
+  document.getElementById('mod-count-texto').textContent = mod.count;
+  const cont = document.getElementById('mod-contenido');
+  cont.innerHTML = mod.situaciones.map((s, i) => `
+    <div class="situacion">
+      <div class="sit-header" onclick="toggleSit(${i})">
+        <div class="sit-icono" style="background:${s.bg};color:${s.color}">${s.icono}</div>
+        <div style="flex:1">
+          <p class="sit-titulo">${s.titulo}</p>
+          <p class="sit-subtitulo">${s.sub}</p>
+        </div>
+        <span class="sit-chevron" id="chev-${i}">∨</span>
+      </div>
+      <div class="sit-cuerpo" id="cuerpo-${i}">
+        <div class="sit-veredicto ${s.veredicto}">${s.vtext}</div>
+        <p class="sit-detalle">${s.detalle}</p>
+        ${s.prov ? `<span class="sit-prov">📍 ${s.prov}</span>` : ''}
+        <p class="sit-ley">${s.ley}</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button onclick="compartir('${id}',${i})" style="flex:1;background:var(--gris-s);border:0.5px solid var(--borde);border-radius:8px;padding:8px;font-size:12px;color:var(--grafito-m);cursor:pointer;font-family:'DM Sans',sans-serif">Compartir</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  mostrarPagina('modulo');
+}
+
+function toggleSit(i) {
+  const cuerpo = document.getElementById('cuerpo-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const open = cuerpo.classList.contains('open');
+  cuerpo.classList.toggle('open', !open);
+  chev.classList.toggle('open', !open);
+  chev.textContent = open ? '∨' : '∧';
+}
+
+function actualizarTabs(pagina) {
+  ['inicio','buscar','provincias'].forEach(t => {
+    const icon = document.getElementById('icon-' + t);
+    const label = document.getElementById('label-' + t);
+    if (icon && label) {
+      icon.classList.toggle('activo', t === pagina);
+      label.classList.toggle('activo', t === pagina);
+    }
+  });
+}
+
+function buscarDesdeHero() {
+  const val = document.getElementById('search-hero').value.trim();
+  if (val) {
+    document.getElementById('buscar-input').value = val;
+    mostrarPagina('buscar');
+  } else {
+    mostrarPagina('buscar');
+  }
+}
+
+function filtrarBusqueda(val) {
+  // En el MVP muestra sugerencias estáticas — en producción conecta con el chatbot
+}
+
+function enviarConsulta() {
+  alert('¡Gracias! Recibimos tu situación. La vamos a revisar y, si corresponde, la sumamos a Norvi.');
+}
+
+function compartir(moduloId, sitIndex) {
+  const mod = MODULOS[moduloId];
+  const sit = mod.situaciones[sitIndex];
+  const texto = `Norvi — ${mod.titulo}\n\n${sit.titulo}\n\n${sit.vtext.replace(/[✓✗!ℹ]/g,'').trim()}\n\n${sit.ley}\n\nnorvi.ar`;
+  if (navigator.share) {
+    navigator.share({ title: 'Norvi', text: texto });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(texto);
+    alert('Copiado al portapapeles');
+  }
+}
+</script>
+</body>
+</html>
