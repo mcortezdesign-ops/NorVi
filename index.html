@@ -439,7 +439,7 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
         <div><p style="font-size:13px;font-weight:500;color:var(--grafito);margin-bottom:2px">Si corresponde, la sumamos</p><p style="font-size:12px;color:var(--gris-t)">Aparece en Norvi con el artículo de ley.</p></div>
       </div>
     </div>
-    <form action="https://formspree.io/f/maqzdkdk" method="POST" onsubmit="guardarYEnviar()" style="margin-bottom:0">
+    <form id="form-consulta" action="https://formspree.io/f/maqzdkdk" method="POST" style="margin-bottom:0">
       <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:14px;margin-bottom:12px">
         <p style="font-size:11px;font-weight:500;color:var(--gris-t);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Describí tu situación</p>
         <textarea id="campo-situacion" name="situacion" required style="width:100%;border:0.5px solid var(--borde);border-radius:8px;padding:10px;font-size:13px;color:var(--grafito);font-family:'DM Sans',sans-serif;resize:none;height:90px;background:var(--blanco-c);outline:none" placeholder="Ej: Estaba saliendo de un garage y pasó una moto por la vereda. ¿Quién tenía razón?"></textarea>
@@ -451,18 +451,19 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
         <input type="hidden" name="_next" value="https://mcortezdesign-ops.github.io/NorVi/?enviado=ok">
       </div>
       <p style="font-size:11px;color:var(--gris-t);line-height:1.5;margin-bottom:14px">Tu consulta no recibirá respuesta directa. Norvi no brinda asesoramiento legal personalizado.</p>
-      <button type="submit" style="width:100%;background:var(--naranja);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">Enviar situación</button>
+      <button type="button" onclick="enviarCompleto()" style="width:100%;background:var(--naranja);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">Enviar situación</button>
     </form>
   </div>
 </div>
 
 <script>
-function guardarYEnviar() {
+function enviarCompleto() {
   const s = document.getElementById('campo-situacion').value.trim();
   const p = document.getElementById('campo-provincia').value.trim();
-  if (!s) return false;
+  if (!s) { alert('Por favor describí tu situación antes de enviar.'); return; }
   const msg = encodeURIComponent('📋 *Nueva consulta Norvi*\n\n*Situación:* ' + s + '\n*Provincia:* ' + (p||'No especificada') + '\n\n_norvi.ar_');
-  setTimeout(() => { window.open('https://wa.me/541144456452?text=' + msg, '_blank'); }, 800);
+  window.open('https://wa.me/541144456452?text=' + msg, '_blank');
+  setTimeout(() => { document.querySelector('#pagina-consulta form').submit(); }, 600);
 }
 </script>
 
