@@ -451,19 +451,22 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
         <input type="hidden" name="_next" value="https://mcortezdesign-ops.github.io/NorVi/?enviado=ok">
       </div>
       <p style="font-size:11px;color:var(--gris-t);line-height:1.5;margin-bottom:14px">Tu consulta no recibirá respuesta directa. Norvi no brinda asesoramiento legal personalizado.</p>
-      <button type="button" onclick="enviarCompleto()" style="width:100%;background:var(--naranja);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">Enviar situación</button>
+      <a id="btn-whatsapp" href="#" onclick="return enviarPorWhatsapp()" style="display:block;width:100%;background:var(--naranja);color:white;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;box-sizing:border-box">Enviar situación →</a>
     </form>
   </div>
 </div>
 
 <script>
-function enviarCompleto() {
+function enviarPorWhatsapp() {
   const s = document.getElementById('campo-situacion').value.trim();
   const p = document.getElementById('campo-provincia').value.trim();
-  if (!s) { alert('Por favor describí tu situación antes de enviar.'); return; }
+  if (!s) { alert('Por favor describí tu situación antes de enviar.'); return false; }
   const msg = encodeURIComponent('📋 *Nueva consulta Norvi*\n\n*Situación:* ' + s + '\n*Provincia:* ' + (p||'No especificada') + '\n\n_norvi.ar_');
-  window.open('https://wa.me/541144456452?text=' + msg, '_blank');
-  setTimeout(() => { document.querySelector('#pagina-consulta form').submit(); }, 600);
+  const btn = document.getElementById('btn-whatsapp');
+  btn.textContent = '¡Enviado! Abriendo WhatsApp...';
+  btn.style.background = '#1B6B3A';
+  window.location.href = 'https://wa.me/541144456452?text=' + msg;
+  return false;
 }
 </script>
 
