@@ -1,0 +1,25 @@
+{
+  "name": "Norvi — Consulta vial Argentina",
+  "short_name": "Norvi",
+  "description": "Consulta vial instantánea para conductores argentinos. Respuestas con respaldo legal.",
+  "start_url": "/NorVi/",
+  "scope": "/NorVi/",
+  "display": "standalone",
+  "background_color": "#1E1E1E",
+  "theme_color": "#E85D04",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

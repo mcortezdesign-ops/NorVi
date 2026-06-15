@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Norvi — Consulta vial instantánea</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#E85D04">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Norvi">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
@@ -162,7 +168,7 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
   </div>
 
   <div class="stats">
-    <div class="stat"><span class="stat-num">140+</span><span class="stat-label">situaciones resueltas</span></div>
+    <div class="stat"><span class="stat-num">150+</span><span class="stat-label">situaciones resueltas</span></div>
     <div class="stat"><span class="stat-num">24</span><span class="stat-label">provincias cubiertas</span></div>
     <div class="stat"><span class="stat-num">Ley</span><span class="stat-label">cada respuesta tiene su artículo</span></div>
   </div>
@@ -321,6 +327,24 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
         <span class="pf-texto">¿Vale la licencia digital en Córdoba?</span>
         <i class="ti ti-chevron-right pf-arrow"></i>
       </a>
+    </div>
+  </div>
+
+  <div class="seccion">
+    <div class="modulos-grupo">
+      <p class="grupo-label">Maniobras de emergencia</p>
+      <div class="modulos-grid">
+        <a class="modulo-card" onclick="mostrarModulo('maniobras')">
+          <i class="ti ti-alert-triangle modulo-icon"></i>
+          <p class="modulo-nombre">Cuando el peligro viene de afuera</p>
+          <p class="modulo-count">5 situaciones</p>
+        </a>
+        <a class="modulo-card" onclick="mostrarModulo('maniobras')">
+          <i class="ti ti-mountain modulo-icon"></i>
+          <p class="modulo-nombre">Cuando el terreno te atrapa</p>
+          <p class="modulo-count">5 situaciones</p>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -722,6 +746,21 @@ const MODULOS = {
       { titulo: 'Fotomultas y radares municipales: ¿son legales y cuáles son tus derechos?', sub: 'Cada vez más municipios del conurbano los usan', icono: 'ti-camera', bg: '#EAF3DE', color: '#3B6D11', ver: 'v-verde', vicon: 'ti-check', vtext: 'Son legales si el municipio tiene ordenanza que los habilita — y tenés derecho a impugnar', detalle: 'Los sistemas de fotomulta son legales cuando el municipio tiene ordenanza que los habilita y los equipos están homologados y calibrados.<br><br><strong>Tus derechos:</strong><br>— Ver la imagen o video que sustenta la infracción<br>— Impugnar si el equipo no estaba homologado o calibrado<br>— Alegar que no eras el conductor<br>— El plazo para impugnar generalmente es de 10 a 30 días hábiles desde la notificación<br><br><strong>El descuento por pago anticipado:</strong> la mayoría ofrece descuentos del 30 al 50% si pagás en los primeros días.', ley: 'Art. 1 — Ley 24.449 / Ordenanzas municipales' },
       { titulo: '¿Cómo sé qué normas tiene mi municipio?', sub: 'La guía práctica para no depender de la simpatía en un control', icono: 'ti-map-search', bg: '#FCEBEB', color: '#A32D2D', ver: 'v-azul', vicon: 'ti-info-circle', vtext: 'Toda ordenanza municipal es pública — tenés derecho a consultarla', detalle: '<strong>Dónde buscar:</strong><br>— Boletín Oficial Municipal: sitio web oficial del municipio<br>— Dirección de Tránsito local: por teléfono o en persona<br>— SIBOM (Provincia de Buenos Aires): sibom.slyt.gba.gob.ar<br><br><strong>Las normas que más varían:</strong><br>— Velocidades en zonas escolares y residenciales<br>— Horarios de estacionamiento<br>— Restricciones para motos en zonas céntricas<br>— Circulación de vehículos de carga en horarios pico<br><br><strong>Ante un control que te parece incorrecto:</strong> pedí que te citen la norma específica que estás infringiendo. Todo agente tiene obligación de indicar el fundamento legal de la infracción que labra.', ley: 'Art. 1 — Ley 24.449 / Art. 31 — Constitución Nacional' }
     ]
+  },
+  maniobras: {
+    titulo: 'Maniobras de emergencia', count: '10 situaciones',
+    situaciones: [
+      { titulo: 'Viene un auto a contramano directo hacia mí', sub: 'Cuando el peligro viene de afuera — El instinto dice izquierda, la técnica dice derecha', icono: 'ti-arrow-left', bg: '#FCEBEB', color: '#A32D2D', ver: 'v-rojo', vicon: 'ti-x', vtext: 'No te tirés a la izquierda — tirarse a la derecha es la maniobra correcta', detalle: 'El instinto es esquivar hacia la izquierda porque el auto viene por tu carril. Error — si ambos hacen lo mismo se vuelven a encontrar. La técnica correcta es <strong>tirarse a la derecha</strong> hacia la banquina, reducir velocidad y dejar que el otro pase.<br><br><strong>Si el choque es inevitable:</strong> no soltés el volante, no frenes de golpe con las ruedas cortadas — eso vuelca. Intentá un impacto oblicuo antes que frontal. El choque lateral a 80 km/h es mucho menos letal que el frontal.', ley: 'Art. 39 inc. b — Ley 24.449 / Técnica de conducción defensiva' },
+      { titulo: 'Se desprende algo del vehículo de adelante', sub: 'Cuando el peligro viene de afuera — Tenés menos tiempo del que creés', icono: 'ti-package', bg: '#FAEEDA', color: '#854F0B', ver: 'v-naranja', vicon: 'ti-alert-triangle', vtext: 'Frenar primero, esquivar después — nunca al revés', detalle: 'El error más frecuente es girar primero y frenar después — eso vuelca el auto. La secuencia correcta es: <strong>frenar en línea recta primero</strong>, reducir velocidad, y solo entonces esquivar si hay espacio.<br><br><strong>Si no hay tiempo de frenar:</strong> mantené el volante firme y soltá el acelerador. Un impacto frontal a baja velocidad con el auto estabilizado es menos peligroso que un vuelco a alta velocidad.<br><br><strong>La distancia de seguridad es la única defensa real:</strong> a 110 km/h necesitás al menos 80 metros para reaccionar y frenar.', ley: 'Art. 52 — Ley 24.449 / ISO 3888 Maniobra de esquiva' },
+      { titulo: 'Me dormí al volante y desperté fuera del carril', sub: 'Cuando el peligro viene de afuera — Caso real: lo que hiciste bien sin saberlo', icono: 'ti-zzz', bg: '#EEEDFE', color: '#534AB7', ver: 'v-verde', vicon: 'ti-check', vtext: 'No girar bruscamente — ir a la banquina disponible y reincorporarse con calma', detalle: 'El instinto al despertar fuera del carril es girar bruscamente para volver. Eso puede volcar el auto o enviarte al zanjón. La técnica correcta es <strong>evaluar, ir a la banquina disponible y reincorporarte cuando la situación esté controlada</strong>.<br><br><strong>Por qué no se gira bruscamente:</strong> a 100 km/h un volantazo genera fuerzas laterales que superan la capacidad de agarre del neumático. El auto no sigue la dirección — derrapa o vuelca.<br><br><strong>Después del susto:</strong> parás en la primera oportunidad segura. No seguís manejando — el cuerpo vivió un evento de estrés extremo y los reflejos están alterados.', ley: 'Art. 39 inc. b — Ley 24.449 / Técnica de conducción defensiva' },
+      { titulo: 'Reventón de neumático a alta velocidad', sub: 'Cuando el peligro viene de afuera — El instinto de frenar fuerte puede ser fatal', icono: 'ti-circle-dot', bg: '#FCEBEB', color: '#A32D2D', ver: 'v-rojo', vicon: 'ti-x', vtext: 'No frenes de golpe — soltá el acelerador, sujetá el volante con firmeza y dejá que el auto baje velocidad solo', detalle: 'Un reventón trasero empuja el auto hacia el lado del neumático reventado. Un reventón delantero hace que el volante tire bruscamente. En ambos casos el instinto de frenar fuerte empeora la situación.<br><br><strong>La secuencia correcta:</strong><br>1. Sujetás el volante con ambas manos con firmeza<br>2. Soltás el acelerador gradualmente<br>3. Mantenés la dirección en línea recta<br>4. Dejás que la velocidad baje sola<br>5. Cuando tenés control, te dirigís a la banquina<br>6. Solo entonces usás el freno — suave y progresivo', ley: 'Art. 39 inc. a — Ley 24.449 / Técnica de conducción defensiva' },
+      { titulo: 'El freno hidráulico no responde', sub: 'Cuando el peligro viene de afuera — El freno de mano como último recurso', icono: 'ti-brake', bg: '#FAEEDA', color: '#854F0B', ver: 'v-naranja', vicon: 'ti-alert-triangle', vtext: 'Freno motor primero, freno de mano progresivo después — nunca de golpe', detalle: 'Si el freno hidráulico falla completamente, tenés dos herramientas: el <strong>freno motor</strong> y el <strong>freno de mano</strong>.<br><br><strong>Freno motor primero:</strong> bajás marchas progresivamente — de 5ª a 4ª, de 4ª a 3ª. Cada cambio reduce velocidad sin desestabilizar.<br><br><strong>Freno de mano después:</strong> se aplica de forma <strong>progresiva y controlada</strong> — no de golpe. Jalarlo de golpe bloquea las ruedas traseras y hace girar el auto. Aplicado suavemente, frena sin perder dirección.<br><br><strong>En automático:</strong> la palanca en L o 1 hace freno motor. El freno de mano funciona igual.', ley: 'Art. 39 inc. a — Ley 24.449 / Técnica de conducción defensiva' },
+      { titulo: 'El auto se fue en el barro o arena', sub: 'Cuando el terreno te atrapa — El error más común es acelerar fuerte', icono: 'ti-road', bg: '#E6F1FB', color: '#185FA5', ver: 'v-rojo', vicon: 'ti-x', vtext: 'No aceleres fuerte — las ruedas que giran en vacío cavan el hoyo y te hunden más', detalle: '<strong>Lo que funciona:</strong><br>— Reducí el giro del volante — las ruedas rectas tienen más tracción<br>— Técnica de balanceo: avanzás un poco, reculás un poco, alternando para ganar impulso<br>— Ponés arena, tierra o ramas delante de las ruedas motrices para dar agarre<br>— Desinflá levemente los neumáticos si tenés compresor — más superficie de contacto<br><br><strong>Lo que no funciona:</strong><br>— Acelerar a fondo — solo excava más<br>— Girar el volante completamente — las ruedas giradas no traccionan<br>— Que alguien empuje mientras acelerás fuerte — el auto sale disparado', ley: 'Art. 39 inc. a — Ley 24.449 / CESVI Argentina' },
+      { titulo: 'Estoy cruzando agua y el nivel sube', sub: 'Cuando el terreno te atrapa — La regla de oro: si no conocés la profundidad, no cruzás', icono: 'ti-droplet', bg: '#FCEBEB', color: '#A32D2D', ver: 'v-rojo', vicon: 'ti-x', vtext: 'Si el agua llega a las puertas — salís del auto. El auto es reemplazable, vos no.', detalle: '<strong>Antes de cruzar:</strong> si no conocés la profundidad, no cruzás. Un palo o una persona a pie primero. El agua que parece de 20 cm puede tener 80 cm en el centro.<br><br><strong>Si estás adentro y el agua sube:</strong><br>1. Salís antes de que la presión impida abrir la puerta<br>2. Si la puerta no abre, bajás la ventanilla<br>3. Si la ventanilla eléctrica no funciona — rompés el vidrio lateral con el reposacabezas en las esquinas<br>4. Esperás que el habitáculo se llene parcialmente para equilibrar la presión — entonces la puerta abre<br><br><strong>La corriente:</strong> 30 cm de agua corriente pueden arrastrar un auto.', ley: 'Defensa Civil Argentina / ANSV / Art. 39 — Ley 24.449' },
+      { titulo: 'Camino de montaña: se me cruza algo y hay precipicio', sub: 'Cuando el terreno te atrapa — Siempre mejor chocar la pared que caer al vacío', icono: 'ti-mountain', bg: '#EAF3DE', color: '#3B6D11', ver: 'v-naranja', vicon: 'ti-alert-triangle', vtext: 'Siempre hacia la pared de roca — nunca hacia el precipicio', detalle: 'En un camino de montaña angosto, si algo se cruza la regla es absoluta: <strong>hacia la pared, nunca hacia el vacío</strong>. Un impacto contra roca a baja velocidad es sobrevivible. Una caída no lo es.<br><br><strong>Cómo circular en montaña para evitar este escenario:</strong><br>— Velocidad precautoria — siempre podés frenar antes de la próxima curva visible<br>— Pegado a la pared interior en curvas cerradas<br>— Bocina antes de cada curva ciega<br>— En bajada: freno motor siempre, no freno hidráulico continuo — se recalienta y falla', ley: 'Art. 51 — Ley 24.449 / Vialidad Nacional Argentina' },
+      { titulo: 'Perdí el control en nieve o hielo', sub: 'Cuando el terreno te atrapa — En hielo los frenos no frenan y el volante no dirige', icono: 'ti-snowflake', bg: '#E6F1FB', color: '#185FA5', ver: 'v-rojo', vicon: 'ti-x', vtext: 'No frenes — soltá el acelerador y girá el volante hacia donde querés ir, no contra el derrape', detalle: '<strong>Si el auto derrapa hacia adelante (subviraje):</strong> soltás el acelerador, no girás más el volante — esperás que las ruedas recuperen agarre.<br><br><strong>Si el auto derrapa de atrás (sobreviraje):</strong> girás el volante hacia el mismo lado que derrapa la cola — contraintuitivo pero correcto.<br><br><strong>Si tenés ABS:</strong> podés frenar fuerte y mantener el pie firme. Si no tenés ABS: freno intermitente, nunca bloqueado.<br><br><strong>La prevención es todo:</strong> en hielo la velocidad máxima segura es la mitad de la normal.', ley: 'Art. 51 — Ley 24.449 / Vialidad Nacional Patagonia' },
+      { titulo: 'Quedé varado en ripio', sub: 'Cuando el terreno te atrapa — El ripio se comporta diferente al asfalto en todo', icono: 'ti-traffic-cone', bg: '#FAEEDA', color: '#854F0B', ver: 'v-azul', vicon: 'ti-info-circle', vtext: 'Velocidad constante y sin movimientos bruscos — el ripio penaliza los cambios abruptos', detalle: 'En ripio la distancia de frenado se triplica y los volantazos pueden hacer girar el auto sobre su eje.<br><br><strong>Si perdés el control en ripio:</strong> soltás el acelerador suavemente, no frenás de golpe, mantenés el volante firme.<br><br><strong>Si quedás varado:</strong> técnica de balanceo, ruedas lo más rectas posible, piedras o ramas bajo las ruedas motrices.<br><br><strong>La velocidad razonable en ripio:</strong> entre 60 y 80 km/h en buenas condiciones. A mayor velocidad las piedras sueltas se vuelven proyectiles para el auto de atrás.', ley: 'Arts. 48 inc. f y 50 — Ley 24.449 (velocidad precautoria)' }
+    ]
   }
 };
 
@@ -796,6 +835,13 @@ function compartir(modId, i) {
   const t = `Norvi — ${MODULOS[modId].titulo}\n\n${s.titulo}\n\n${s.vtext}\n\n${s.ley}\n\nnorvi.ar`;
   if (navigator.share) { navigator.share({ title: 'Norvi', text: t }); }
   else if (navigator.clipboard) { navigator.clipboard.writeText(t); alert('Copiado al portapapeles'); }
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
 }
 </script>
 </body>
