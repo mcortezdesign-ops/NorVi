@@ -1,10 +1,10 @@
-const CACHE = 'norvi-v1';
+const CACHE = 'norvi-v3';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  'https://norvi.com.ar/',
+  'https://norvi.com.ar/index.html',
+  'https://norvi.com.ar/manifest.json',
+  'https://norvi.com.ar/icon-192.png',
+  'https://norvi.com.ar/icon-512.png',
   'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap',
   'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css'
 ];
@@ -27,6 +27,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('https://norvi.com.ar/')))
   );
 });
