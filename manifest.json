@@ -1,9 +1,9 @@
 {
-  "name": "Norvi — Consulta vial Argentina",
+  "name": "Norvi — Consulta y capacitación vial preventiva",
   "short_name": "Norvi",
   "description": "Consulta vial instantánea para conductores argentinos. Respuestas con respaldo legal.",
-  "start_url": "/NorVi/",
-  "scope": "/NorVi/",
+  "start_url": "https://norvi.com.ar/",
+  "scope": "https://norvi.com.ar/",
   "display": "standalone",
   "background_color": "#1E1E1E",
   "theme_color": "#E85D04",
