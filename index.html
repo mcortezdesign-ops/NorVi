@@ -363,7 +363,7 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
 
   <footer>
     <div class="footer-logo"><span class="nor">Nor</span><span class="vi">vi</span></div>
-    <span class="footer-txt">norvi.ar · 2025</span>
+    <span class="footer-txt">norvi.com.ar · 2025</span>
   </footer>
 </div>
 
@@ -490,9 +490,9 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
         <div style="height:10px"></div>
         <p style="font-size:11px;font-weight:500;color:var(--gris-t);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Tu provincia (opcional)</p>
         <input type="text" id="campo-provincia" name="provincia" style="width:100%;border:0.5px solid var(--borde);border-radius:8px;padding:9px 10px;font-size:13px;color:var(--grafito);font-family:'DM Sans',sans-serif;background:var(--blanco-c);outline:none" placeholder="Ej: Buenos Aires, Córdoba...">
-        <input type="hidden" name="origen" value="Norvi — norvi.ar">
+        <input type="hidden" name="origen" value="Norvi — norvi.com.ar">
         <input type="hidden" name="_subject" value="Nueva consulta Norvi">
-        <input type="hidden" name="_next" value="https://mcortezdesign-ops.github.io/NorVi/?enviado=ok">
+        <input type="hidden" name="_next" value="https://norvi.com.ar/?enviado=ok">
       </div>
       <p style="font-size:11px;color:var(--gris-t);line-height:1.5;margin-bottom:14px">Tu consulta no recibirá respuesta directa. Norvi no brinda asesoramiento legal personalizado.</p>
       <a id="btn-whatsapp" href="#" onclick="return enviarPorWhatsapp()" style="display:block;width:100%;background:var(--naranja);color:white;border-radius:10px;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;box-sizing:border-box">Enviar situación →</a>
@@ -505,7 +505,7 @@ function enviarPorWhatsapp() {
   const s = document.getElementById('campo-situacion').value.trim();
   const p = document.getElementById('campo-provincia').value.trim();
   if (!s) { alert('Por favor describí tu situación antes de enviar.'); return false; }
-  const msg = encodeURIComponent('📋 *Nueva consulta Norvi*\n\n*Situación:* ' + s + '\n*Provincia:* ' + (p||'No especificada') + '\n\n_norvi.ar_');
+  const msg = encodeURIComponent('📋 *Nueva consulta Norvi*\n\n*Situación:* ' + s + '\n*Provincia:* ' + (p||'No especificada') + '\n\n_norvi.com.ar_');
   const btn = document.getElementById('btn-whatsapp');
   btn.textContent = '¡Enviado! Abriendo WhatsApp...';
   btn.style.background = '#1B6B3A';
@@ -848,7 +848,7 @@ function buscarDesdeHero() {
 
 function compartir(modId, i) {
   const s = MODULOS[modId].situaciones[i];
-  const t = `Norvi — ${MODULOS[modId].titulo}\n\n${s.titulo}\n\n${s.vtext}\n\n${s.ley}\n\nnorvi.ar`;
+  const t = `Norvi — ${MODULOS[modId].titulo}\n\n${s.titulo}\n\n${s.vtext}\n\n${s.ley}\n\nnorvi.com.ar`;
   if (navigator.share) { navigator.share({ title: 'Norvi', text: t }); }
   else if (navigator.clipboard) { navigator.clipboard.writeText(t); alert('Copiado al portapapeles'); }
 }
