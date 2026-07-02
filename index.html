@@ -402,17 +402,27 @@ footer { background: var(--grafito); padding: 16px 24px; display: flex; justify-
     <h2 class="mod-titulo">Buscar</h2>
   </div>
   <div class="buscar-wrap">
-    <input class="buscar-campo" type="text" placeholder="Escribí tu duda en tus palabras..." id="buscar-input">
-    <div class="buscar-sugerencias">
-      <p style="font-size:12px;color:var(--gris-t);margin-bottom:8px">Consultas frecuentes</p>
-      <div class="buscar-sug" onclick="mostrarModulo('prioridades')"><i class="ti ti-arrows-right-left buscar-sug-icon"></i>¿Quién tiene prioridad en una rotonda?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('accidentes')"><i class="ti ti-car-crash buscar-sug-icon"></i>Me chocaron en doble fila. ¿Tengo culpa?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('ruta')"><i class="ti ti-road buscar-sug-icon"></i>¿Puedo ir en el carril izquierdo de la autopista?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('conductor')"><i class="ti ti-device-mobile buscar-sug-icon"></i>¿Puedo usar el celular con manos libres?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('estacionamiento')"><i class="ti ti-parking buscar-sug-icon"></i>¿Dónde está prohibido estacionar?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('emergencias')"><i class="ti ti-alert-triangle buscar-sug-icon"></i>Se me frenó el auto en ruta. ¿Qué hago?</div>
-      <div class="buscar-sug" onclick="mostrarPagina('provincias')"><i class="ti ti-map-pin buscar-sug-icon"></i>¿Vale la licencia digital en Córdoba?</div>
-      <div class="buscar-sug" onclick="mostrarModulo('accidentes')"><i class="ti ti-car buscar-sug-icon"></i>Me chocaron por atrás. ¿Siempre tienen la culpa?</div>
+    <input class="buscar-campo" type="text" placeholder="Escribí tu duda en tus palabras..." id="buscar-input" oninput="buscarEnVivo(this.value)">
+    <div id="buscar-resultados" style="display:none;margin-bottom:12px">
+      <p id="buscar-count" style="font-size:11px;color:var(--gris-t);margin-bottom:8px"></p>
+      <div id="buscar-lista" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+    <div id="buscar-vacio" style="display:none;padding:24px;text-align:center">
+      <i class="ti ti-search-off" style="font-size:32px;color:var(--gris-t)"></i>
+      <p style="font-size:13px;color:var(--gris-t);margin-top:8px">No encontramos resultados.<br>Probá con otras palabras.</p>
+    </div>
+    <div id="buscar-sugerencias-wrap">
+      <div class="buscar-sugerencias">
+        <p style="font-size:12px;color:var(--gris-t);margin-bottom:8px">Consultas frecuentes</p>
+        <div class="buscar-sug" onclick="mostrarModulo('prioridades')"><i class="ti ti-arrows-right-left buscar-sug-icon"></i>¿Quién tiene prioridad en una rotonda?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('accidentes')"><i class="ti ti-car-crash buscar-sug-icon"></i>Me chocaron en doble fila. ¿Tengo culpa?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('multas')"><i class="ti ti-currency-dollar buscar-sug-icon"></i>¿Cuánto cuesta cruzar en rojo?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('conductor')"><i class="ti ti-beer-off buscar-sug-icon"></i>¿Cuánto es el límite de alcohol?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('vtv')"><i class="ti ti-tools buscar-sug-icon"></i>¿Qué pasa si tengo la VTV vencida?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('delivery')"><i class="ti ti-motorbike buscar-sug-icon"></i>Me chocó un delivery. ¿Quién responde?</div>
+        <div class="buscar-sug" onclick="mostrarModulo('estacionamiento')"><i class="ti ti-parking buscar-sug-icon"></i>¿Dónde está prohibido estacionar?</div>
+        <div class="buscar-sug" onclick="mostrarPagina('provincias')"><i class="ti ti-map-pin buscar-sug-icon"></i>¿Vale la licencia digital en Córdoba?</div>
+      </div>
     </div>
   </div>
   <div class="contanos" style="margin:0 24px 24px">
@@ -848,10 +858,89 @@ function toggleSit(i) {
   ch.classList.toggle('open', !open);
 }
 
+function buscarEnVivo(query) {
+  const q = query.trim().toLowerCase();
+  const sugs = document.getElementById('buscar-sugerencias-wrap');
+  const resultados = document.getElementById('buscar-resultados');
+  const vacio = document.getElementById('buscar-vacio');
+  const lista = document.getElementById('buscar-lista');
+  const count = document.getElementById('buscar-count');
+
+  if (!q || q.length < 2) {
+    sugs.style.display = '';
+    resultados.style.display = 'none';
+    vacio.style.display = 'none';
+    return;
+  }
+
+  sugs.style.display = 'none';
+
+  const stopWords = ['que','como','cuando','donde','quien','cual','con','por','para','una','uno','los','las','del','hay','esto','esta','tengo','tiene','puedo','puede','me','mi','si','no','se','le','lo','la','un','es'];
+  const palabras = q.split(' ').filter(p => p.length > 2 && !stopWords.includes(p));
+
+  if (!palabras.length) {
+    sugs.style.display = '';
+    resultados.style.display = 'none';
+    vacio.style.display = 'none';
+    return;
+  }
+
+  const hits = [];
+  for (const modId in MODULOS) {
+    const mod = MODULOS[modId];
+    mod.situaciones.forEach((sit, idx) => {
+      const texto = (sit.titulo + ' ' + sit.sub + ' ' + (sit.detalle||'') + ' ' + (sit.vtext||'')).toLowerCase();
+      let score = 0;
+      palabras.forEach(p => { if (texto.includes(p)) score++; });
+      if (score > 0) hits.push({ modId, idx, sit, mod, score });
+    });
+  }
+
+  hits.sort((a, b) => b.score - a.score);
+
+  if (!hits.length) {
+    resultados.style.display = 'none';
+    vacio.style.display = '';
+    return;
+  }
+
+  vacio.style.display = 'none';
+  count.textContent = hits.length + ' resultado' + (hits.length !== 1 ? 's' : '') + ' para "' + query.trim() + '"';
+  lista.innerHTML = hits.slice(0, 8).map(h =>
+    '<div class="buscar-sug" onclick="abrirDesdeSearch(\'' + h.modId + '\',' + h.idx + ')" style="flex-direction:column;align-items:flex-start;gap:3px">' +
+    '<span style="font-size:10px;color:var(--naranja);font-weight:500">' + h.mod.titulo + '</span>' +
+    '<span style="font-size:13px;color:var(--grafito)">' + h.sit.titulo + '</span>' +
+    '<span style="font-size:11px;color:var(--gris-t)">' + h.sit.sub + '</span>' +
+    '</div>'
+  ).join('');
+  resultados.style.display = '';
+}
+
+function abrirDesdeSearch(modId, idx) {
+  mostrarModulo(modId);
+  setTimeout(() => {
+    const cards = document.querySelectorAll('#pagina-modulo .situacion-card');
+    if (cards[idx]) {
+      cards[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const body = cards[idx].querySelector('.sit-body');
+      const chev = cards[idx].querySelector('.sit-chev');
+      if (body && !body.classList.contains('open')) {
+        body.classList.add('open');
+        if (chev) chev.classList.add('open');
+      }
+    }
+  }, 350);
+}
+
 function buscarDesdeHero() {
   const v = document.getElementById('search-hero').value.trim();
-  if (v) document.getElementById('buscar-input').value = v;
-  mostrarPagina('buscar');
+  if (v) {
+    document.getElementById('buscar-input').value = v;
+    mostrarPagina('buscar');
+    buscarEnVivo(v);
+  } else {
+    mostrarPagina('buscar');
+  }
 }
 
 
